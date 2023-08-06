@@ -1,0 +1,2 @@
+File Log: This is a log message.
+File Log: Another log message.
