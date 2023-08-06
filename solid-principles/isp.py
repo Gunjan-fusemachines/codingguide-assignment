@@ -1,40 +1,40 @@
-# Interface Segregation Principle
+from abc import ABC, abstractmethod
 
-# Interface for payment processing
-class PaymentProcessor:
+# Interface for processing payments
+class PaymentProcessor(ABC):
+    @abstractmethod
     def process_payment(self, amount):
         pass
 
-
-# Interface for payment refunding
-class RefundProcessor:
-    def refund_payment(self, amount):
+# Interface for processing refunds
+class RefundProcessor(ABC):
+    @abstractmethod
+    def process_refund(self, amount):
         pass
 
-
-# Class for processing payments only
+# Class that implements the PaymentProcessor interface
 class OnlinePaymentProcessor(PaymentProcessor):
     def process_payment(self, amount):
-        # Implementation to process payment goes here
-        print("Payment processed successfully:", amount)
+        print(f"Processing payment of ${amount}")
 
-
-# Class for processing and refunding payments
-class OnlineRefundPaymentProcessor(PaymentProcessor, RefundProcessor):
+# Class that implements both PaymentProcessor and RefundProcessor interfaces
+class FullPaymentProcessor(PaymentProcessor, RefundProcessor):
     def process_payment(self, amount):
-        # Implementation to process payment goes here
-        print("Payment processed successfully:", amount)
+        print(f"Processing payment of ${amount}")
 
-    def refund_payment(self, amount):
-        # Implementation to refund payment goes here
-        print("Payment refunded successfully:", amount)
+    def process_refund(self, amount):
+        print(f"Processing refund of ${amount}")
 
 
-# Example usage
-payment_processor = OnlinePaymentProcessor()
-refund_payment_processor = OnlineRefundPaymentProcessor()
+def client(payment_processor):
+    if isinstance(payment_processor, PaymentProcessor):
+        payment_processor.process_payment(100)
+    if isinstance(payment_processor, RefundProcessor):
+        payment_processor.process_refund(50)
 
-payment_processor.process_payment(1000)     
-refund_payment_processor.process_payment(500)
 
-refund_payment_processor.refund_payment(200)
+online_payment_processor = OnlinePaymentProcessor()
+full_payment_processor = FullPaymentProcessor()
+
+client(online_payment_processor)  
+client(full_payment_processor)    

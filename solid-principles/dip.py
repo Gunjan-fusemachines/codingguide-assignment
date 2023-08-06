@@ -1,34 +1,22 @@
-# dependency inversion principle
-
-# Abstraction for email sending functionality
 from abc import ABC, abstractmethod
 
-class EmailSender(ABC):
+class MessageSender(ABC):
     @abstractmethod
-    def send_email(self, recipient, subject, message):
+    def send_message(self, recipient, subject, message):
         pass
 
+class EmailSender(MessageSender):
+    def send_message(self, recipient, subject, message):
+        print(f"Sending email to {recipient}: {subject} - {message}")
 
-# Concrete implementation of the email sending functionality
-class ConcreteEmailSender(EmailSender):
-    def send_email(self, recipient, subject, message):
-        # Implementation to send an email goes here
-        print(f"Email sent to: {recipient}")
-        print(f"Subject: {subject}")
-        print(f"Message: {message}")
-
-
-# Notification service with dependency on EmailSender abstraction
 class NotificationService:
-    def __init__(self, email_sender):
-        self.email_sender = email_sender
+    def __init__(self, message_sender):
+        self.message_sender = message_sender
 
-    def send_notification(self, recipient, subject, message):
-        self.email_sender.send_email(recipient, subject, message)
+    def send_notification(self, recipient, message):
+        self.message_sender.send_message(recipient, "Notification", message)
 
-
-# Example usage
-email_sender = ConcreteEmailSender()
+# Using the NotificationService to send a notification
+email_sender = EmailSender()
 notification_service = NotificationService(email_sender)
-
-notification_service.send_notification("abcxyz@fusemachines.com", "assignment day 3", "dependency inversion principle")
+notification_service.send_notification("email@example.com", "Hello, solid principle foundation is completed!")

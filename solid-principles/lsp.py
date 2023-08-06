@@ -1,53 +1,33 @@
-# Liskov Substitution Principle
-
-# Define a common base class for all accounts
-class Account:
+class BankAccount:
     def __init__(self, balance):
         self.balance = balance
 
-    def deposit(self, amount):
-        self.balance += amount
-
     def withdraw(self, amount):
-        self.balance -= amount
+        if amount <= self.balance:
+            self.balance -= amount
+            print(f"Withdrew ${amount}. Remaining balance: ${self.balance}")
+        else:
+            print("Insufficient funds!")
 
-    def get_balance(self):
-        return self.balance
-
-
-# Create a SavingsAccount class that inherits from Account
-class SavingsAccount(Account):
-    def __init__(self, balance):
-        super().__init__(balance)
-
-    # Any additional methods or behavior specific to SavingsAccount can be added here
-
-
-# Create a CheckingAccount class that also inherits from Account
-class CheckingAccount(Account):
+class CheckingAccount:
     def __init__(self, balance, overdraft_limit):
-        super().__init__(balance)
+        self.savings_account = BankAccount(balance)
         self.overdraft_limit = overdraft_limit
 
     def withdraw(self, amount):
-        if amount <= self.balance + self.overdraft_limit:
-            self.balance -= amount
-            return True
+        if amount <= self.savings_account.balance + self.overdraft_limit:
+            self.savings_account.withdraw(amount)
         else:
-            return False
+            print("Exceeds overdraft limit or insufficient funds!")
 
-    # Any additional methods or behavior specific to CheckingAccount can be added here
+def perform_bank_actions(account):
+    account.withdraw(100)
+    account.withdraw(200)
+    account.withdraw(500)
 
+if __name__ == "__main__":
+    savings_account = BankAccount(500)
+    checking_account = CheckingAccount(1000, overdraft_limit=200)
 
-# Example usage of the classes
-savings_account = SavingsAccount(1000)
-checking_account = CheckingAccount(500, 200)
-
-savings_account.deposit(100)
-checking_account.deposit(50)
-
-savings_account.withdraw(200)
-checking_account.withdraw(300)
-
-print("Savings Account Balance:", savings_account.get_balance()) 
-print("Checking Account Balance:", checking_account.get_balance())
+    perform_bank_actions(savings_account)
+    perform_bank_actions(checking_account)
